@@ -24,7 +24,7 @@ public class MainPageTest {
         //1.Открыть главную страницу.
         browser.get("https://yandex.ru/news/");
         WebElement a = browser.findElement(By.xpath("//span[text()='Технологии']"));
-        //2.Перейти на вкладку “Технологии”.
+        //2.Перейти на вкладку “Технологии”
         a.click();
         //пролистываем до конца страницу
         List<WebElement> berth = browser.findElements(By.xpath("//div[@class=\"mg-footer__item news-footer__item\"]/a[text()=\"Как работают Яндекс.Новости\"]"));
