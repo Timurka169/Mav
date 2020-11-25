@@ -159,17 +159,22 @@ public class OneNewsPageTest {
     @Test
     public void screenCards() {
         int namberCards = 0;
-
-        while (cards.size() > namberCards ){
+        while (cards.size() - 1 > namberCards ){
             cards = browser.findElements(By.xpath("//article[contains(@class,'news-card_single') or contains(@class,'news-card_double')]"));
+            ((JavascriptExecutor)browser).executeScript("arguments[0].scrollIntoView(true);", cards.get(namberCards));
+            //сделали скриншот
             screenshot(cards.get(namberCards),i+"."+ namberCards + ".1 screenCards" );
             //открыли конкретную новость
             cards.get(namberCards).click();
+
             //if (namberCards>5) js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+            //сделали скриншот
             screenshot(i+"."+ namberCards + ".2 screenCards");
             namberCards++;
             browser.get("https://yandex.ru/news/rubric/computers");
         }
+        i++;
     }
 
 
