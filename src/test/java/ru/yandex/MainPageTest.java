@@ -1,10 +1,7 @@
 package ru.yandex;
 
 import org.junit.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.List;
@@ -33,14 +30,17 @@ public class MainPageTest {
             berth = browser.findElements(By.xpath("//div[@class=\"mg-footer__item news-footer__item\"]/a[text()=\"Как работают Яндекс.Новости\"]"));
         }
         //сохраняем все карточки в переменную cards
-        cards = browser.findElements(By.xpath("//article[contains(@class,'news-card_single') or contains(@class,'news-card_double')]"));
+        cards = browser.findElements(By.xpath("//article[contains(@class,'news-card_single') or contains(@class,'news-card_double')]"));// содержит или содержит
     }
 
     @Test
     public void cardsClick() {
     //проверка возможности навигироваться на горячую новость
+        int i = 1;
         for(WebElement e : cards) {
             Assert.assertNotNull(e.findElement(By.xpath(".//a[@class=\"news-card__link\"]")).getAttribute("href"));
+            System.out.println(i + "№"+ e.findElement(By.xpath(".//a[@class=\"news-card__link\"]")).getAttribute("href"));
+            i++;
         }
     }
 
@@ -49,24 +49,34 @@ public class MainPageTest {
     @Test
     public void cardsCheckImg() {
     //проверка наличие у статьи картинки
+        int i = 1;
         for(WebElement e : cards) {
-            Assert.assertNotNull(e.findElement(By.xpath(".//img")).getAttribute("src"));
+            Assert.assertNotNull(e.findElement(By.xpath(".//img")).getAttribute("src"));                                                                             //возможно нужно было ещё открыть каждую картинку и проверить значение равно нулю или нет
+            System.out.println(i + "№ " +e.findElement(By.xpath(".//img")).getAttribute("src"));
+            i++;
         }
+
     }
 
     @Test
     public void cardsCheckText() {
     //проверка наличие описание статьи
+        int i = 1;
         for(WebElement e : cards) {
             Assert.assertNotNull(e.findElement(By.xpath(".//div[@class=\"news-card__annotation\"]")).getText());
+            System.out.println(i + "№ " + e.findElement(By.xpath(".//div[@class=\"news-card__annotation\"]")).getText());
+            i++;
         }
     }
 
     @Test
     public void cardsCheckTextH2() {
     //проверка наличие заголовка статьи
+        int i = 1;
         for(WebElement e : cards) {
             Assert.assertNotNull(e.findElement(By.xpath(".//h2[@class=\"news-card__title\"]")).getText());
+            System.out.println(i + "№ " + e.findElement(By.xpath(".//h2[@class=\"news-card__title\"]")).getText());
+            i++;
         }
     }
 
@@ -74,4 +84,5 @@ public class MainPageTest {
     public static void afterClass() {
         browser.quit();
     }
+
 }
