@@ -13,7 +13,7 @@ public class MainPageTest {
 
     @BeforeClass
     public static void beforeClass() {
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/driver/chromedriver.exe"); //read me! to run, you need chrome version 86.0.42* if you have your own driver delete this line
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/driver/chromedriver.exe"); //read me! to run, you need chrome version 86.0.42* if you have your own driver delete this line
         browser = new ChromeDriver();
         browser.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         JavascriptExecutor js = ((JavascriptExecutor) browser);

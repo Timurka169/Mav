@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -25,14 +26,14 @@ public class OneNewsPageTest {
     public static void screenshot(String nameFileScreen) {
         try {
             File screenshot = ((TakesScreenshot)browser).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(screenshot, new File("C:\\screen\\" + nameFileScreen + ".png")); //тут поменять путь "C:\\screen\\"
+            FileUtils.copyFile(screenshot, new File("src/test/resources/driver/screens/" + nameFileScreen + ".png")); //тут поменять путь "C:\\screen\\"
         } catch (Exception e) {
             //skip
         }
     }
     /**
      * Метод - выделяет webElement красным, делает скриншот и убирает выделение.
-     * @param webElement - Элемент для выделения
+     * @param webElement - Один элемент для выделения
      * @param nameFileScreen - Имя скриншота
      */
     public static void screenshot(WebElement webElement, String nameFileScreen) {
@@ -47,6 +48,20 @@ public class OneNewsPageTest {
         //Reset style
         js.executeScript("arguments[0].setAttribute(arguments[1], arguments[2])", webElement, "style", originalStyle);
     }
+    /**
+     * Метод - выделяет webElement красным, делает скриншот и убирает выделение.
+     * @param webElements - Элементы для выделения
+     * @param nameFileScreen - Имя скриншота
+     */
+    public static void screenshot(List<WebElement> webElements, String nameFileScreen) {
+        for(WebElement e : webElements){
+            js.executeScript("arguments[0].setAttribute(arguments[1], arguments[2])", e, "style", e.getAttribute("style") + "border: 2px solid red;");
+        }
+
+        screenshot(nameFileScreen);
+
+    }
+
     //класс для проверки битых ссылок
     public static class LinkUtil {
         public static int getResponseCode(String link) {
@@ -72,11 +87,7 @@ public class OneNewsPageTest {
 
     @BeforeClass
     public static void beforeClass() {
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/driver/chromedriver.exe"); //read me! to run, you need chrome version 86.0.42* if you have your own driver delete this line
-//        // Setting your Chrome options (Desired capabilities)
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--start-maximized");
-//        options.addArguments("--start-fullscreen");
+        System.setProperty("webdriver.chrome.driver", "src/test/resources/driver/chromedriver.exe"); //read me! to run, you need chrome version 86.0.42* if you have your own driver delete this line
         browser = new ChromeDriver();
         browser.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         browser.manage().window().maximize();
@@ -122,7 +133,8 @@ public class OneNewsPageTest {
        List<WebElement> sourceNewsLinks = browser.findElements(By.xpath("//div[@class=\"mg-snippet mg-snippet_without-text news-story__snippet\"]/div[@class=\"mg-snippet__wrapper\"]/div[@class=\"mg-snippet__content\"]/a[@href]"));
        //List<WebElement> sourceNewsLinks = browser.findElement(By.xpath("//article/div[@class=\"mg-story__body\"]/div[5]"));
        js.executeScript("window.scrollTo(0, 450)");
-       screenshot(browser.findElement(By.xpath("//article/div[@class=\"mg-story__body\"]/div[5]")), i+".3 sourceLink");
+       //screenshot(browser.findElement(By.xpath("//article/div[@class=\"mg-story__body\"]/div[5]")), i+".3 sourceLink");
+       screenshot(sourceNewsLinks, i+".3 sourceLink");
         i++;
        Assert.assertTrue(sourceNewsLinks.size() > 0);
     }
@@ -135,14 +147,16 @@ public class OneNewsPageTest {
         screenshot(i+".2 brokenLinks");
         //получили ссылку на кнопку "показать ещё"
         WebElement button = browser.findElement(By.xpath("//button[@class=\"Button2 mg-button mg-button_theme_secondary mg-button_pin_round news-story__more\"]"));
-        //прокрутили вниз
+//        //прокрутили вниз
         js.executeScript("window.scrollTo(0, 700)");
-        screenshot(i+".3 brokenLinks");
-        //нажали на кнопку
-        screenshot(button,i+".4 brokenLinks");
         button.click();
-        screenshot(i+".5 brokenLinks");
-        screenshot(browser.findElement(By.xpath("//article/div[@class=\"mg-story__body\"]/div[5]")), i+".6 brokenLinks");
+
+        //нажали на кнопку
+        //screenshot(button,i+".4 brokenLinks");
+
+
+        screenshot(i+".3 brokenLinks");
+        //screenshot(browser.findElement(By.xpath("//article/div[@class=\"mg-story__body\"]/div[5]")), i+".6 brokenLinks");
         //получили ссылки на новости
         List<WebElement> links = browser.findElements(By.xpath("//div[@class=\"mg-snippet mg-snippet_without-text news-story__snippet\"]/div[@class=\"mg-snippet__wrapper\"]/div[@class=\"mg-snippet__content\"]/a[@href]"));
         Map<Integer, List<String>> map = links
@@ -152,31 +166,37 @@ public class OneNewsPageTest {
                 .distinct()                           // оставляем уникальные ссылки
                 .collect(Collectors.groupingBy(LinkUtil::getResponseCode)); // группируем в зависимости от кода ответа
         //js.executeScript("window.scrollTo(0, 700)");
+        screenshot(links, i + ".4 brokenLinks");
         i++;
         Assert.assertEquals(map.get(200).size(), links.size() );
     }
 
     @Test
     public void screenCards() {
+        Set<String> oldWindowsSet = browser.getWindowHandles();
         int namberCards = 0;
-        while (cards.size() - 1 > namberCards ){
-            cards = browser.findElements(By.xpath("//article[contains(@class,'news-card_single') or contains(@class,'news-card_double')]"));
-            ((JavascriptExecutor)browser).executeScript("arguments[0].scrollIntoView(true);", cards.get(namberCards));
+        for(WebElement e: cards) {
+            ((JavascriptExecutor)browser).executeScript("arguments[0].scrollIntoView(true);", e);
             //сделали скриншот
-            screenshot(cards.get(namberCards),i+"."+ namberCards + ".1 screenCards" );
-            //открыли конкретную новость
-            cards.get(namberCards).click();
-
-            //if (namberCards>5) js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-
-            //сделали скриншот
+            screenshot(e,i+"."+ namberCards + ".1 screenCards" );
+            //открыли конкретную новость в новой вкладке
+            String selectLinkOpeninNewTab = Keys.chord(Keys.CONTROL, Keys.RETURN);
+            e.findElement(By.xpath(".//a[@class=\"news-card__link\"]")).sendKeys(selectLinkOpeninNewTab);
+            // получаем дескрипторы нового окна
+            Set<String> newWindowsSet = browser.getWindowHandles();
+            //удаляем старый сет дескрипторов, отсается новый
+            newWindowsSet.removeAll(oldWindowsSet);
+            //сохраняем его текст
+            String newWindowHandle = newWindowsSet.iterator().next();
+            //передаем управление браузере на новый дискриптор
+            browser.switchTo().window(newWindowHandle);
+            //сделали скриншот открытого окна
             screenshot(i+"."+ namberCards + ".2 screenCards");
+            browser.close();
+            browser.switchTo().window(oldWindowsSet.iterator().next());
             namberCards++;
-            browser.get("https://yandex.ru/news/rubric/computers");
         }
-        i++;
     }
-
 
     @AfterClass
     public static void  afterClass(){
