@@ -27,7 +27,7 @@ public class MainPageTest {
         List<WebElement> berth = browser.findElements(By.xpath("//div[@class=\"mg-footer__item news-footer__item\"]/a[text()=\"Как работают Яндекс.Новости\"]"));
         while(berth.size()==0){
             js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-            berth = browser.findElements(By.xpath("//div[@class=\"mg-footer__item news-footer__item\"]/a[text()=\"Как работают Яндекс.Новости\"]"));
+            berth = browser.findElements(By.xpath("//a[text()='Пользовательское соглашение']"));
         }
         //сохраняем все карточки в переменную cards
         cards = browser.findElements(By.xpath("//article[contains(@class,'news-card_single') or contains(@class,'news-card_double')]"));// содержит или содержит
