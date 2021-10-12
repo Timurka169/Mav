@@ -17,3 +17,24 @@
 * http://internetka.in.ua/browsermobproxy-selenium-perfomance/
 *
 *
+
+
+Git:
+
+git status -u --short --branch    - статус
+
+git log --oneline --decorate -2   - текущая вветвь 
+
+git diff - изменения которые были внесены
+
+git fetch 
+
+git pull 
+
+git checkout 
+
+git add путь
+
+git commit -m "правки текстового файла"
+
+git push 
